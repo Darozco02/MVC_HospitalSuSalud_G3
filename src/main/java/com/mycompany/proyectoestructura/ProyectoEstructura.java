@@ -8,9 +8,12 @@ import javax.swing.JOptionPane;
  */
 public class ProyectoEstructura {
 
-    /**Este metodo invoca al main principal en el cual se pueden seleccionar las distintas opciones
+    /**
+     * Este metodo invoca al main principal en el cual se pueden seleccionar las
+     * distintas opciones
      *
      * Autor Adrian Varela
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -24,24 +27,33 @@ public class ProyectoEstructura {
             opcion = Integer.parseInt(JOptionPane.showInputDialog(
                     "Por favor ingrese una opcion:" + "\n"
                     + "1.Gestionar Llegada de Pacientes" + "\n"
-                    + "2.Ayuda" + "\n"
-                    + "3.Salir"));
+                    + "2.Consultar Bitacoras de Citas del dia" + "\n"
+                    + "3.Consulta de Expediente unico de Pacientes" + "\n"
+                    + "4.Ayuda" + "\n"
+                    + "5.Salir"));
+
             switch (opcion) {
                 case 1:
                     gestionPaciente llegadaPacientes = new gestionPaciente();
                     llegadaPacientes.menuGestionPacientes();
                     break;
                 case 2:
-                    JOptionPane.showMessageDialog(null, "Avance 1 - Version 1.0.0 \nIntegrantes: \n"
+                    bitacoraCita nuevaBitacora = new bitacoraCita();
+                    nuevaBitacora.imprimirBitacora();
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    JOptionPane.showMessageDialog(null, "Avance 2 - Version 2.0.0 \nIntegrantes: \n"
                             + "OROZCO PEREZ DANIEL\n"
                             + "OVIEDO SOTO CRISTAL DILANA\n"
                             + "VARELA MENDEZ ADRIAN\n");
                     break;
-                case 3:
+                case 5:
                     JOptionPane.showMessageDialog(null, "Saliendo del Sistema...");
                     break;
             }
-        } while (opcion != 3);
+        } while (opcion != 5);
 
     }
 }

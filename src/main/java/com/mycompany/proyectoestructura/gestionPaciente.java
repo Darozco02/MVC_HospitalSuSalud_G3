@@ -1,6 +1,5 @@
 package com.mycompany.proyectoestructura;
 
-import java.io.IOException;
 import javax.swing.JOptionPane;
 import java.sql.Timestamp;
 
@@ -20,13 +19,7 @@ public class gestionPaciente {
     private colaPaciente colaPreferencial = new colaPaciente();
     // Pila de Quejas
     private pilaQueja pilaQuejas = new pilaQueja();
-
-    //Variables para los colores de cada cola
-    private String Normal = "\u001B[0m"; //este setea el color de la consola por defecto
-    private String Verde = "\u001B[32m";
-    private String Naranja = "\u001B[33m";
     
-
     /**
      * Este metodo genera un menu para el modulo de gestion de pacientes
      *
@@ -53,7 +46,7 @@ public class gestionPaciente {
                     break;
                 // Metodo para Atender Paciente
                 case 3:
-                // Metodo para Abandonar la cola
+                    // Metodo para Abandonar la cola
                     abandonoColaPaciente();
                     break;
                 case 4:
@@ -61,7 +54,7 @@ public class gestionPaciente {
                     break;
                 // Metodo para mostrar las fichas pendientes
                 case 5:
-                // Metodo para mostrar las quejas recibidas
+                    // Metodo para mostrar las quejas recibidas
                     pilaQuejas.mostrarQuejas();
                     break;
                 case 6:
@@ -132,12 +125,12 @@ public class gestionPaciente {
     }
 
     /**
-     * Metodo que solicita la ficha y motivo al usuario para abandonar
-     * la cola de pacientes segun el tipo. este verifica primero cual es el 
-     * tipo de paciente para ir a buscarlo en la cola correspondiente.
-     * 
+     * Metodo que solicita la ficha y motivo al usuario para abandonar la cola
+     * de pacientes segun el tipo. este verifica primero cual es el tipo de
+     * paciente para ir a buscarlo en la cola correspondiente.
+     *
      * @author Daniel Orozco
-     * 
+     *
      */
     public void abandonoColaPaciente() {
         // Solicitar numero de ficha al usuario
@@ -171,70 +164,73 @@ public class gestionPaciente {
     }
 
     /**
-     * Metodo que gestiona las colas, asignando 2 pacientes preferenciales por 1 regular, se tiene un contador el cual se inicializa en 0 y a la hora de llegar a 2 
-     * preferenciales vuelve a iniciar y gestiona uno regular
-     * 
+     * Metodo que gestiona las colas, asignando 2 pacientes preferenciales por 1
+     * regular, se tiene un contador el cual se inicializa en 0 y a la hora de
+     * llegar a 2 preferenciales vuelve a iniciar y gestiona uno regular
+     *
      * @author Cristal Dilana Oviedo
-     * 
+     *
      * Nota: no recibe parametros
      */
-    
     public void atenderPaciente() {
 
         if (colaPreferencial.isEmpty() && colaRegular.isEmpty()) {
-        JOptionPane.showMessageDialog(null,"No hay pacientes en espera.");
-    }
-     //inicializamos contador de pacientes temporales
-    int contadorPreferencial = 0;
+            JOptionPane.showMessageDialog(null, "No hay pacientes en espera.");
+        }
+        //inicializamos contador de pacientes temporales
+        int contadorPreferencial = 0;
 
-    
-    // se establece que las dos clases no sean nulas (sin datos)
-    while (colaPreferencial.isEmpty()==false || colaRegular.isEmpty()== false) {
+        // se establece que las dos clases no sean nulas (sin datos)
+        while (colaPreferencial.isEmpty() == false || colaRegular.isEmpty() == false) {
 
-        // Si hay preferenciales y no hemos atendido 2 seguidos
-        if (colaPreferencial.isEmpty()==false && contadorPreferencial < 2) {
+            // Si hay preferenciales y no hemos atendido 2 seguidos
+            if (colaPreferencial.isEmpty() == false && contadorPreferencial < 2) {
 
-            Paciente p = colaPreferencial.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +p.getNumFicha()+ " paciente preferencial: cedula: " + p.getCedula()+ " nombre: "+ p.getNombrePaciente());
-            contadorPreferencial++;
+                Paciente p = colaPreferencial.dequeue();
+                JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + " paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
+                contadorPreferencial++;
 
-        } 
-        // Si ya atendimos 2 preferenciales, toca regular
-        else if (!colaRegular.isEmpty()) {
+            } // Si ya atendimos 2 preferenciales, toca regular
+            else if (!colaRegular.isEmpty()) {
 
-            Paciente r = colaRegular.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +r.getNumFicha()+ "paciente preferencial: cedula: " + r.getCedula()+ " nombre: "+ r.getNombrePaciente());
-            contadorPreferencial = 0; // reiniciamos el contador
+                Paciente r = colaRegular.dequeue();
+                JOptionPane.showMessageDialog(null, "Atendiendo ficha " + r.getNumFicha() + "paciente preferencial: cedula: " + r.getCedula() + " nombre: " + r.getNombrePaciente());
+                contadorPreferencial = 0; // reiniciamos el contador
 
-        } 
-        // Si ya no hay regulares, seguir con preferenciales
-        else if (!colaPreferencial.isEmpty()) {
+            } // Si ya no hay regulares, seguir con preferenciales
+            else if (!colaPreferencial.isEmpty()) {
 
-            Paciente p = colaPreferencial.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +p.getNumFicha()+ "paciente preferencial: cedula: " + p.getCedula()+ " nombre: "+ p.getNombrePaciente());
+                Paciente p = colaPreferencial.dequeue();
+                JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + "paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
+            }
         }
     }
-}
-    
-      /**
-     * Metodo que imprime las fichas pendientes por cada cola de manera respectiva
-     * 
+
+    /**
+     * Metodo que imprime las fichas pendientes por cada cola de manera
+     * respectiva
+     *
      * @author Adrian Varela
-     * 
+     *
      * Nota: no recibe parametros
      * @param p
      * @param r
      */
-      
-    
-    public void mostrarFichasPendientes(){
-        
-    JOptionPane.showMessageDialog(null, "\n_________ Fichas pendientes _________\n");
-    JOptionPane.showMessageDialog(null, Naranja + "\n_________ Fichas Preferenciales pendientes _________\n"+Normal);
-    colaPreferencial.imprimeCola();
-    JOptionPane.showMessageDialog(null, Verde + "\n_________ Fichas Preferenciales pendientes _________\n"+Normal);
-    colaRegular.imprimeCola();
-    
-    
+    public void mostrarFichasPendientes() {
+
+        JOptionPane.showMessageDialog(null, "<html>Fichas pendientes:</html>", "Fichas", JOptionPane.PLAIN_MESSAGE);
+
+        // Se muestran las Fichas Preferenciales en color naranja
+        JOptionPane.showMessageDialog(null,
+                "<html><font color='orange'><b>Fichas Preferenciales pendientes</b></font></html>",
+                "Preferenciales", JOptionPane.PLAIN_MESSAGE);
+        colaPreferencial.imprimeCola();
+
+        // Se muestran las fichas regulares en color Verde
+        JOptionPane.showMessageDialog(null,
+                "<html><font color='green'><b>Fichas Regulares pendientes</b></font></html>",
+                "Regulares", JOptionPane.PLAIN_MESSAGE);
+        colaRegular.imprimeCola();
+
     }
 }

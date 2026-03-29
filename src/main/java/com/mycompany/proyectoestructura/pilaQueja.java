@@ -61,12 +61,6 @@ public class pilaQueja {
                                             + " con cédula: " + temporal.getMiQueja().getPacienteQueja().getCedula() + ","
                                             + " abandona la cola sin ser atendido(a) a la fecha y hora: " + temporal.getMiQueja().getFechaAbandono()
                                             + "\n" + "Por el siguiente motivo: " + temporal.getMiQueja().getMotivo() + "\n");
-            
-            // Imprimir todas las quejas no por separado
-            JOptionPane.showMessageDialog(null, "Ficha #" + temporal.getMiQueja().getPacienteQueja().getNumFicha()
-                                            + " con cédula: " + temporal.getMiQueja().getPacienteQueja().getCedula() + ","
-                                            + " abandona la cola sin ser atendido(a) a la fecha y hora: " + temporal.getMiQueja().getFechaAbandono()
-                                            + "\n" + "Por el siguiente motivo: " + temporal.getMiQueja().getMotivo() + "\n");
             temporal = temporal.getAbajo();
         }
     }
