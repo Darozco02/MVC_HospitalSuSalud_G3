@@ -7,32 +7,23 @@ import java.sql.Timestamp;
  * @author Adrian Varela
  */
 public class ExpedienteUnicoPaciente {
-    
-private int cedula;
-private String  nombre , genero;
-private int edad;
 
-private bitacoraCita historicoCita;
+    private int cedula;
+    private String nombre, genero;
+    private int edad;
+   // private listaCircularCitas historicoCitas;
 
     // Constructor
-
-    public ExpedienteUnicoPaciente(int cedula, String nombre, String genero, int edad, bitacoraCita historicoCita) {
+    public ExpedienteUnicoPaciente(int cedula, String nombre, String genero, int edad//, listaCircularCitas historicoCitas
+    ) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.genero = genero;
         this.edad = edad;
-        this.historicoCita = historicoCita;
+      //  this.historicoCitas = historicoCitas;
     }
 
-  
-
-    public ExpedienteUnicoPaciente() {
-    }
-    
-    
-    
     // Getter y Setters
-
     public int getCedula() {
         return cedula;
     }
@@ -65,15 +56,17 @@ private bitacoraCita historicoCita;
         this.edad = edad;
     }
 
-    public bitacoraCita getHistoricoCita() {
-        return historicoCita;
-    }
-
-    public void setHistoricoCita(bitacoraCita historicoCita) {
-        this.historicoCita = historicoCita;
-    }
 
 
+   // public listaCircularCitas getHistoricoCitas() {
+    //    return historicoCitas;
+    //}
+
+    //public void setHistoricoCitas(listaCircularCitas historicoCitas) {
+     //   this.historicoCitas = historicoCitas;
+   // }
+    
+    
 
 
 }

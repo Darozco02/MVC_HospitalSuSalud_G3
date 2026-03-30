@@ -21,6 +21,13 @@ public class gestionPaciente {
     private pilaQueja pilaQuejas = new pilaQueja();
     //lista doble expedientes
     private ListaDobleExpediente listaExpedientes;
+    // Instanciar la clase bitacoraCita
+    private bitacoraCita bitacoraDia = new bitacoraCita();
+    public bitacoraCita getBitacoraDia() {
+        return bitacoraDia;
+    }
+    
+    
 
     /**
      * Este metodo genera un menu para el modulo de gestion de pacientes
@@ -179,7 +186,7 @@ public class gestionPaciente {
      * Nota: no recibe parametros
      */
     public void atenderPaciente() {
-
+                
         if (colaPreferencial.isEmpty() && colaRegular.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay pacientes en espera.");
         }
@@ -190,12 +197,20 @@ public class gestionPaciente {
         while (colaPreferencial.isEmpty() == false || colaRegular.isEmpty() == false) {
 
             // Si hay preferenciales y no hemos atendido 2 seguidos
+            if (colaPreferencial.isEmpty() == false && contadorPreferencial < 2 ) {
+
+                Paciente p = colaPreferencial.dequeue();
+                JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + " paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
+                contadorPreferencial++;}
+ 
+            // Si hay preferenciales y no hemos atendido 2 seguidos
             if (colaPreferencial.isEmpty() == false && contadorPreferencial < 2) {
 
                 Paciente p = colaPreferencial.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + " paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
                 contadorPreferencial++;
-                listaExpedientes.mostrarExpediente(p.getCedula(), crearExpediente());
+ 
+                
 
             } // Si ya atendimos 2 preferenciales, toca regular
             else if (!colaRegular.isEmpty()) {
@@ -203,39 +218,33 @@ public class gestionPaciente {
                 Paciente r = colaRegular.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + r.getNumFicha() + "paciente preferencial: cedula: " + r.getCedula() + " nombre: " + r.getNombrePaciente());
                 contadorPreferencial = 0; // reiniciamos el contador
-                listaExpedientes.mostrarExpediente(r.getCedula(), crearExpediente());
 
             } // Si ya no hay regulares, seguir con preferenciales
             else if (!colaPreferencial.isEmpty()) {
 
                 Paciente p = colaPreferencial.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + "paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
-                listaExpedientes.mostrarExpediente(p.getCedula(), crearExpediente());
+               
             }
         }
     }
-
         /**
-     * Metodo que pide al usuario el crear el expediente
+     * Metodo que genera la informacion para guardar en el expediente 
+     * 
+     * Aun se está desarrollando
      *
      * @author Adrian Varela
+     * @param cedulaConsultada
      *
-     * Nota: no recibe parametros
-     * @return  expediente creado
- 
      */
-    public ExpedienteUnicoPaciente crearExpediente() {
-        // Pedir la informacion al paciente
-        int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese el numero de cedula del paciente: "));
+    public ExpedienteUnicoPaciente crearInformacion(int cedulaConsultada) {
+int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese el numero de cedula del paciente: "));
         String nombre = JOptionPane.showInputDialog("Por favor ingrese el nombre del paciente: ");
         String genero = JOptionPane.showInputDialog("Por favor ingrese el genero del paciente: ");
         int edad = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese la edad del paciente: "));
-        bitacoraCita historicoCita = null;
-        // Nuevo Paciente creado
-        ExpedienteUnicoPaciente Expediente = new ExpedienteUnicoPaciente(cedula, nombre, genero, edad, historicoCita);
-        return Expediente;
+        ExpedienteUnicoPaciente expediente =new ExpedienteUnicoPaciente(cedula, nombre, genero, edad);
+        return expediente;
     }
-
     /**
      * Metodo que imprime las fichas pendientes por cada cola de manera
      * respectiva
@@ -243,8 +252,6 @@ public class gestionPaciente {
      * @author Adrian Varela
      *
      * Nota: no recibe parametros
-     * @param p
-     * @param r
      */
     public void mostrarFichasPendientes() {
 

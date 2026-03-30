@@ -4,6 +4,8 @@
  */
 package com.mycompany.proyectoestructura;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Adrian Varela
@@ -109,26 +111,30 @@ public class ListaDobleExpediente {
      * @param cedulaPaciente
      * @return null
      */
-    public ExpedienteUnicoPaciente mostrarExpediente(int cedulaPaciente, ExpedienteUnicoPaciente valor ) {
+    public ExpedienteUnicoPaciente mostrarExpediente(int cedulaPaciente) {
         
-        if (expedienteRegistrado(cedulaPaciente)==false)
-        {insertaOrdenado(valor);
-        }
-        
-        
-        else{    
-    
     NodoExpediente actual = primero;
 
-    while (actual != primero) {
+    do {
         if (actual.getPaciente().getCedula() == cedulaPaciente) {
+
+            // ✅ IMPRIMIR EL EXPEDIENTE
+            JOptionPane.showMessageDialog(null,
+                    "Expediente encontrado:\n" +
+                    "Cédula: " + actual.getPaciente().getCedula() +
+                    "\nNombre: " + actual.getPaciente().getNombre());
+
             return actual.getPaciente();
         }
-    }
-    
- 
-}
+        actual = actual.getSiguiente();
+    } while (actual != primero);
+
+    // ❌ No encontrado
+    JOptionPane.showMessageDialog(null, "Expediente no encontrado");
         return null;
+        
+
+
     }   
 
     /**Este metodo devuelve si el paciente no está creado
@@ -149,5 +155,19 @@ public class ListaDobleExpediente {
     
     return false;
 }
+    
+    public ExpedienteUnicoPaciente crearExpediente() {
+        // Pedir la informacion al paciente
+        int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese el numero de cedula del paciente: "));
+        String nombre = JOptionPane.showInputDialog("Por favor ingrese el nombre del paciente: ");
+        String genero = JOptionPane.showInputDialog("Por favor ingrese el genero del paciente: ");
+        int edad = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese la edad del paciente: "));
+        //listaCircularCitas historicoCitas = null;
+        
+        // Nuevo Paciente creado
+        ExpedienteUnicoPaciente Expediente = new ExpedienteUnicoPaciente(cedula, nombre, genero, edad);//, //historicoCitas);
+        insertaOrdenado(Expediente);
+        return Expediente;
+    }
 
 }
