@@ -31,14 +31,14 @@ public class bitacoraCita {
             primero = nuevoNodo;
 
             // Caso 2: La cédula es menor o igual a la del primero
-        } else if (primero.getMiCita().getPaciente().getCedula().compareTo(dato.getPaciente().getCedula()) >= 0) {
+        } else if (dato.getPaciente().getCedula() <= primero.getMiCita().getPaciente().getCedula()) {
             nuevoNodo.setSiguiente(primero);
             primero = nuevoNodo;
 
             // Caso 3: Buscar posición en medio o al final
         } else {
             nodoCita aux = primero;
-            while (aux.getSiguiente() != null && aux.getSiguiente().getMiCita().getPaciente().getCedula().compareTo(dato.getPaciente().getCedula()) < 0) {
+            while (aux.getSiguiente() != null && aux.getSiguiente().getMiCita().getPaciente().getCedula() < dato.getPaciente().getCedula()) {
                 aux = aux.getSiguiente();
             }
             nuevoNodo.setSiguiente(aux.getSiguiente());

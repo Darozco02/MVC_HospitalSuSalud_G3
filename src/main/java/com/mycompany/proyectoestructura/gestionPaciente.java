@@ -19,7 +19,9 @@ public class gestionPaciente {
     private colaPaciente colaPreferencial = new colaPaciente();
     // Pila de Quejas
     private pilaQueja pilaQuejas = new pilaQueja();
-    
+    //lista doble expedientes
+    private ListaDobleExpediente listaExpedientes;
+
     /**
      * Este metodo genera un menu para el modulo de gestion de pacientes
      *
@@ -78,6 +80,7 @@ public class gestionPaciente {
                 // Contador para generar fichas de paciente regular
                 contadorRegular++;
                 numFicha = "R" + contadorRegular;
+
                 // Solicitar informacion al usuario
                 Paciente ingresoPacienteReg = solicitarInformacion(numFicha);
                 // Agregar el paciente a la cola Regular
@@ -115,7 +118,7 @@ public class gestionPaciente {
      */
     public Paciente solicitarInformacion(String numFicha) {
         // Pedir la informacion al paciente
-        String cedula = JOptionPane.showInputDialog("Por favor ingrese su numero de cedula: ");
+        int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese su numero de cedula: "));
         String nombre = JOptionPane.showInputDialog("Por favor ingrese su nombre: ");
         // Generar la fecha timestamp
         Timestamp fecha = new Timestamp(System.currentTimeMillis());
@@ -164,11 +167,14 @@ public class gestionPaciente {
     }
 
     /**
+     * NOTA: Este metodo está dando error cuando se genera un expediente nuevo
+     * 
      * Metodo que gestiona las colas, asignando 2 pacientes preferenciales por 1
      * regular, se tiene un contador el cual se inicializa en 0 y a la hora de
      * llegar a 2 preferenciales vuelve a iniciar y gestiona uno regular
      *
      * @author Cristal Dilana Oviedo
+     * @author Adrian Varela
      *
      * Nota: no recibe parametros
      */
@@ -189,6 +195,7 @@ public class gestionPaciente {
                 Paciente p = colaPreferencial.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + " paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
                 contadorPreferencial++;
+                listaExpedientes.mostrarExpediente(p.getCedula(), crearExpediente());
 
             } // Si ya atendimos 2 preferenciales, toca regular
             else if (!colaRegular.isEmpty()) {
@@ -196,14 +203,37 @@ public class gestionPaciente {
                 Paciente r = colaRegular.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + r.getNumFicha() + "paciente preferencial: cedula: " + r.getCedula() + " nombre: " + r.getNombrePaciente());
                 contadorPreferencial = 0; // reiniciamos el contador
+                listaExpedientes.mostrarExpediente(r.getCedula(), crearExpediente());
 
             } // Si ya no hay regulares, seguir con preferenciales
             else if (!colaPreferencial.isEmpty()) {
 
                 Paciente p = colaPreferencial.dequeue();
                 JOptionPane.showMessageDialog(null, "Atendiendo ficha " + p.getNumFicha() + "paciente preferencial: cedula: " + p.getCedula() + " nombre: " + p.getNombrePaciente());
+                listaExpedientes.mostrarExpediente(p.getCedula(), crearExpediente());
             }
         }
+    }
+
+        /**
+     * Metodo que pide al usuario el crear el expediente
+     *
+     * @author Adrian Varela
+     *
+     * Nota: no recibe parametros
+     * @return  expediente creado
+ 
+     */
+    public ExpedienteUnicoPaciente crearExpediente() {
+        // Pedir la informacion al paciente
+        int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese el numero de cedula del paciente: "));
+        String nombre = JOptionPane.showInputDialog("Por favor ingrese el nombre del paciente: ");
+        String genero = JOptionPane.showInputDialog("Por favor ingrese el genero del paciente: ");
+        int edad = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese la edad del paciente: "));
+        bitacoraCita historicoCita = null;
+        // Nuevo Paciente creado
+        ExpedienteUnicoPaciente Expediente = new ExpedienteUnicoPaciente(cedula, nombre, genero, edad, historicoCita);
+        return Expediente;
     }
 
     /**
