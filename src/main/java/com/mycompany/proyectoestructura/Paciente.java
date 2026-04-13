@@ -9,12 +9,12 @@ import java.sql.Timestamp;
 public class Paciente {
     
     private String numFicha;
-    private String cedula;
+    private int cedula;
     private String nombrePaciente;
     private Timestamp fecha; // formato TIMESTAMP con fecha y hora
 
     // Constructor
-    public Paciente(String numFicha, String cedula, String nombrePaciente, Timestamp fecha) {
+    public Paciente(String numFicha, int cedula, String nombrePaciente, Timestamp fecha) {
         this.numFicha = numFicha;
         this.cedula = cedula;
         this.nombrePaciente = nombrePaciente;
@@ -35,11 +35,11 @@ public class Paciente {
         this.numFicha = numFicha;
     }
 
-    public String getCedula() {
+    public int getCedula() {
         return cedula;
     }
 
-    public void setCedula(String cedula) {
+    public void setCedula(int cedula) {
         this.cedula = cedula;
     }
 

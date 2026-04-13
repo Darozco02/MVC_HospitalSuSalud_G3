@@ -1,6 +1,9 @@
 package com.mycompany.proyectoestructura;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.swing.JOptionPane;
 import java.sql.Timestamp;
 
@@ -20,12 +23,18 @@ public class gestionPaciente {
     private colaPaciente colaPreferencial = new colaPaciente();
     // Pila de Quejas
     private pilaQueja pilaQuejas = new pilaQueja();
+    //lista doble expedientes
+    private ListaDobleExpediente listaExpedientes = new ListaDobleExpediente();
+    // Instanciar la clase bitacoraCita
+    private bitacoraCita bitacoraDia = new bitacoraCita();
 
-    //Variables para los colores de cada cola
-    private String Normal = "\u001B[0m"; //este setea el color de la consola por defecto
-    private String Verde = "\u001B[32m";
-    private String Naranja = "\u001B[33m";
-    
+    public bitacoraCita getBitacoraDia() {
+        return bitacoraDia;
+    }
+
+    public ListaDobleExpediente getListaExpedientes() {
+        return listaExpedientes;
+    }
 
     /**
      * Este metodo genera un menu para el modulo de gestion de pacientes
@@ -53,7 +62,7 @@ public class gestionPaciente {
                     break;
                 // Metodo para Atender Paciente
                 case 3:
-                // Metodo para Abandonar la cola
+                    // Metodo para Abandonar la cola
                     abandonoColaPaciente();
                     break;
                 case 4:
@@ -61,7 +70,7 @@ public class gestionPaciente {
                     break;
                 // Metodo para mostrar las fichas pendientes
                 case 5:
-                // Metodo para mostrar las quejas recibidas
+                    // Metodo para mostrar las quejas recibidas
                     pilaQuejas.mostrarQuejas();
                     break;
                 case 6:
@@ -85,6 +94,7 @@ public class gestionPaciente {
                 // Contador para generar fichas de paciente regular
                 contadorRegular++;
                 numFicha = "R" + contadorRegular;
+
                 // Solicitar informacion al usuario
                 Paciente ingresoPacienteReg = solicitarInformacion(numFicha);
                 // Agregar el paciente a la cola Regular
@@ -122,7 +132,7 @@ public class gestionPaciente {
      */
     public Paciente solicitarInformacion(String numFicha) {
         // Pedir la informacion al paciente
-        String cedula = JOptionPane.showInputDialog("Por favor ingrese su numero de cedula: ");
+        int cedula = Integer.parseInt(JOptionPane.showInputDialog("Por favor ingrese su numero de cedula: "));
         String nombre = JOptionPane.showInputDialog("Por favor ingrese su nombre: ");
         // Generar la fecha timestamp
         Timestamp fecha = new Timestamp(System.currentTimeMillis());
@@ -132,12 +142,12 @@ public class gestionPaciente {
     }
 
     /**
-     * Metodo que solicita la ficha y motivo al usuario para abandonar
-     * la cola de pacientes segun el tipo. este verifica primero cual es el 
-     * tipo de paciente para ir a buscarlo en la cola correspondiente.
-     * 
+     * Metodo que solicita la ficha y motivo al usuario para abandonar la cola
+     * de pacientes segun el tipo. este verifica primero cual es el tipo de
+     * paciente para ir a buscarlo en la cola correspondiente.
+     *
      * @author Daniel Orozco
-     * 
+     *
      */
     public void abandonoColaPaciente() {
         // Solicitar numero de ficha al usuario
@@ -171,70 +181,172 @@ public class gestionPaciente {
     }
 
     /**
-     * Metodo que gestiona las colas, asignando 2 pacientes preferenciales por 1 regular, se tiene un contador el cual se inicializa en 0 y a la hora de llegar a 2 
-     * preferenciales vuelve a iniciar y gestiona uno regular
-     * 
-     * @author Cristal Dilana Oviedo
-     * 
-     * Nota: no recibe parametros
+     * El siguiente metodo atiende los paciente e ingresa diferentes datos a los
+     * expedientes y bitacoras. De igual manera informa al usuario sobre el
+     * paciente atentido, solicita informacion adicional y confirma que el
+     * paciente fue atendido
+     *
+     * @author Daniel Orozco
      */
-    
     public void atenderPaciente() {
 
         if (colaPreferencial.isEmpty() && colaRegular.isEmpty()) {
-        JOptionPane.showMessageDialog(null,"No hay pacientes en espera.");
-    }
-     //inicializamos contador de pacientes temporales
-    int contadorPreferencial = 0;
-
-    
-    // se establece que las dos clases no sean nulas (sin datos)
-    while (colaPreferencial.isEmpty()==false || colaRegular.isEmpty()== false) {
-
-        // Si hay preferenciales y no hemos atendido 2 seguidos
-        if (colaPreferencial.isEmpty()==false && contadorPreferencial < 2) {
-
-            Paciente p = colaPreferencial.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +p.getNumFicha()+ " paciente preferencial: cedula: " + p.getCedula()+ " nombre: "+ p.getNombrePaciente());
-            contadorPreferencial++;
-
-        } 
-        // Si ya atendimos 2 preferenciales, toca regular
-        else if (!colaRegular.isEmpty()) {
-
-            Paciente r = colaRegular.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +r.getNumFicha()+ "paciente preferencial: cedula: " + r.getCedula()+ " nombre: "+ r.getNombrePaciente());
-            contadorPreferencial = 0; // reiniciamos el contador
-
-        } 
-        // Si ya no hay regulares, seguir con preferenciales
-        else if (!colaPreferencial.isEmpty()) {
-
-            Paciente p = colaPreferencial.dequeue();
-            JOptionPane.showMessageDialog(null, "Atendiendo ficha " +p.getNumFicha()+ "paciente preferencial: cedula: " + p.getCedula()+ " nombre: "+ p.getNombrePaciente());
+            JOptionPane.showMessageDialog(null, "No hay pacientes en espera",
+                    "Sin pacientes", JOptionPane.WARNING_MESSAGE);
+            return;
         }
+
+        Paciente pacienteAtendido = null;
+
+        /* Condicional para atender pacientes y sacarlos de la cola,
+        se cumple con lo requerido de atender de 2 en 2.
+         */
+        if (!colaPreferencial.isEmpty() && contadorPreferencial < 2) {
+            pacienteAtendido = colaPreferencial.dequeue();
+            contadorPreferencial++;
+        } else if (!colaRegular.isEmpty()) {
+            pacienteAtendido = colaRegular.dequeue();
+            contadorPreferencial = 0;
+        } else {
+            pacienteAtendido = colaPreferencial.dequeue();
+            contadorPreferencial++;
+        }
+
+        // Mostrar paciente atendido
+        JOptionPane.showMessageDialog(null,
+                "Ficha: " + pacienteAtendido.getNumFicha() + "\n"
+                + "Cedula: " + pacienteAtendido.getCedula() + "\n"
+                + "Nombre: " + pacienteAtendido.getNombrePaciente(),
+                "Paciente Atendido", JOptionPane.INFORMATION_MESSAGE);
+
+        int edad = 0;
+        String genero = "";
+
+        // Verificar si el paciente esta en el expediente
+        if (!listaExpedientes.expedienteRegistrado(pacienteAtendido.getCedula())) {
+            JOptionPane.showMessageDialog(null, "Paciente: "
+                    + pacienteAtendido.getNombrePaciente()
+                    + " asiste a consulta por primera vez.");
+            // Solicitar datos del paciente
+            edad = Integer.parseInt(JOptionPane.showInputDialog(null,
+                    "Ingrese la edad del nuevo paciente: "));
+            genero = JOptionPane.showInputDialog(null,
+                    "Ingrese el genero del paciente: ");
+        } else {
+            // llama al metodo de la clase Expediente de paciente que busca el paciente en el expediente
+            ExpedienteUnicoPaciente expediente = listaExpedientes.buscarExpediente(pacienteAtendido.getCedula());
+            // Mostrar datos del expediente
+            JOptionPane.showMessageDialog(null,
+                    "Cedula: " + expediente.getCedula() + "\n"
+                    + "Nombre: " + expediente.getNombre() + "\n"
+                    + "Edad: " + expediente.getEdad() + "\n"
+                    + "Genero: " + expediente.getGenero(),
+                    "Expediente", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        // Pedir los datos de la cita
+        String nombreDoctor = JOptionPane.showInputDialog(null, "Ingrese el nombre del doctor: ");
+        String diagnostico = JOptionPane.showInputDialog(null, "Ingrese el diagnostico realizado: ");
+        String medicamentos = JOptionPane.showInputDialog(null, "Ingrese los medicamentos enviados: ");
+        Timestamp fechaAtencion = new Timestamp(System.currentTimeMillis());
+
+        // Almacenar pacientes atendidos en el expediente
+        ExpedienteUnicoPaciente expedienteActualizado;
+
+        if (!listaExpedientes.expedienteRegistrado(pacienteAtendido.getCedula())) {
+            expedienteActualizado = new ExpedienteUnicoPaciente(pacienteAtendido.getCedula(), pacienteAtendido.getNombrePaciente(),
+                    genero, edad);
+            listaExpedientes.insertaOrdenado(expedienteActualizado);
+        } else {
+            // "recupera el expediente existente"
+            expedienteActualizado = listaExpedientes.buscarExpediente(pacienteAtendido.getCedula());
+        }
+
+        // Guardar cita en el historial de citas
+        historicoCita citaNueva = new historicoCita(fechaAtencion, nombreDoctor, diagnostico);
+        expedienteActualizado.getHistoricoCitas().insertarOrdenado(citaNueva);
+
+        // Guardar el historico de medicamentos
+        HistoricoMedicamentos medicamentoNuevo = new HistoricoMedicamentos(pacienteAtendido.getCedula(), fechaAtencion, medicamentos, pacienteAtendido.getCedula());
+        /*En la instancia se pone en el primer campo la cedula del paciente
+        para que el usuario pueda identifiacr los medicamentos por numero
+        de cedula*/
+        expedienteActualizado.getHistoricoMedicamentos().insertarOrdenado(medicamentoNuevo);
+
+        agregarPacienteCSV(expedienteActualizado, diagnostico, medicamentos);
+        // Agregar datos a la bitacora diaria
+        citaDia citaDiaria = new citaDia(pacienteAtendido, pacienteAtendido.getFecha(), fechaAtencion);
+        bitacoraDia.insertarOrdenado(citaDiaria);
+
+        // INdicar al usuario que la cita termino
+        JOptionPane.showMessageDialog(null,
+                "Paciente: " + pacienteAtendido.getNombrePaciente()
+                + " su cita ha concluido!",
+                "Cita Finalizada", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**Metodo que guarda los datos ingresados por el doctor que atendió al usuario en un archivo CSV
+     *
+     * @author Adrian Varela
+     * @param paciente
+     * @param diagnostico
+     * @param medicamento
+     */
+    public void agregarPacienteCSV(ExpedienteUnicoPaciente paciente, String diagnostico, String medicamento) {
+    String ruta = System.getProperty("user.home") + "/Desktop/pacientes.csv";
+    java.io.File archivo = new java.io.File(ruta);
+
+    // Usamos el constructor de FileWriter(archivo, append)
+    // El 'true' es vital para que NO borre lo anterior
+    try (FileWriter fw = new FileWriter(archivo, true);
+         BufferedWriter bw = new BufferedWriter(fw);
+         PrintWriter writer = new PrintWriter(bw)) {
+
+        // Escribir encabezado solo si el archivo es nuevo o está vacío
+        if (archivo.length() == 0) {
+            writer.println("Nombre,Edad,Genero,Diagnostico,Medicamento");
+        }
+
+        // Escribir los datos
+        writer.println(
+                paciente.getNombre() + "," +
+                paciente.getEdad() + "," +
+                paciente.getGenero() + "," +
+                diagnostico + "," +
+                medicamento
+        );
+        
+        // Forzamos que los datos se escriban físicamente en el disco
+        writer.flush();
+
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(null, "Error: Asegúrate de que el archivo CSV no esté abierto en Excel.\n" + e.getMessage(),
+                "Error de Escritura", JOptionPane.ERROR_MESSAGE);
     }
 }
-    
-      /**
-     * Metodo que imprime las fichas pendientes por cada cola de manera respectiva
-     * 
+/**
+     * Metodo que imprime las fichas pendientes por cada cola de manera
+     * respectiva
+     *
      * @author Adrian Varela
-     * 
+     *
      * Nota: no recibe parametros
-     * @param p
-     * @param r
      */
-      
-    
-    public void mostrarFichasPendientes(){
-        
-    JOptionPane.showMessageDialog(null, "\n_________ Fichas pendientes _________\n");
-    JOptionPane.showMessageDialog(null, Naranja + "\n_________ Fichas Preferenciales pendientes _________\n"+Normal);
-    colaPreferencial.imprimeCola();
-    JOptionPane.showMessageDialog(null, Verde + "\n_________ Fichas Preferenciales pendientes _________\n"+Normal);
-    colaRegular.imprimeCola();
-    
-    
+    public void mostrarFichasPendientes() {
+
+        JOptionPane.showMessageDialog(null, "<html>Fichas pendientes:</html>", "Fichas", JOptionPane.PLAIN_MESSAGE);
+
+        // Se muestran las Fichas Preferenciales en color naranja
+        JOptionPane.showMessageDialog(null,
+                "<html><font color='orange'><b>Fichas Preferenciales pendientes</b></font></html>",
+                "Preferenciales", JOptionPane.PLAIN_MESSAGE);
+        colaPreferencial.imprimeCola();
+
+        // Se muestran las fichas regulares en color Verde
+        JOptionPane.showMessageDialog(null,
+                "<html><font color='green'><b>Fichas Regulares pendientes</b></font></html>",
+                "Regulares", JOptionPane.PLAIN_MESSAGE);
+        colaRegular.imprimeCola();
+
     }
 }

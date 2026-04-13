@@ -119,10 +119,10 @@ public class colaPaciente {
         }
         return actual.getPaciente();
     }
-    
+
     /**
      * metodo que indica si la cola está vacía
-     * 
+     *
      * @author Adrian Varela
      *
      * @return true si la pila está vacía, false si tiene datos.
@@ -135,20 +135,21 @@ public class colaPaciente {
             return false;
         }
     }
-    
-        
+
+
+
     /**
      * Metodo que imprime los pacientes almacenados en la cola
-     * 
+     *
      * @author Adrian Varela
      *
      */
-    public void imprimeCola(){
+    public void imprimeCola() {
 
         nodoPaciente temp = primero;
         while (temp != null) {
-            JOptionPane.showMessageDialog(null, "Pacientes en espera: ficha: "+ temp.getPaciente().getNumFicha()+" nombre: "+temp.getPaciente().getNombrePaciente());
+            JOptionPane.showMessageDialog(null, "Pacientes en espera: ficha: " + temp.getPaciente().getNumFicha() + " nombre: " + temp.getPaciente().getNombrePaciente());
             temp = temp.getReferencia();
-}
-}
+        }
+    }
 }
